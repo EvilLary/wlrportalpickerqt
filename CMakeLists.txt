@@ -10,8 +10,8 @@ if(UPPER_BUILD_TYPE STREQUAL "DEBUG")
     set(QT_QML_GENERATE_QMLLS_INI ON)
 endif()
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Gui Qml Quick WaylandClient)
-qt_standard_project_setup(REQUIRES 6.5)
+find_package(Qt6 6.7 REQUIRED COMPONENTS Gui Qml Quick WaylandClient)
+qt_standard_project_setup(REQUIRES 6.7)
 qt_policy(SET QTP0004 NEW)
 
 find_package(PkgConfig REQUIRED)
@@ -21,8 +21,6 @@ pkg_get_variable(WAYLAND_PROTOCOLS_DIR wayland-protocols pkgdatadir)
 
 qt_add_executable(wlrportalpicker
     src/main.cpp
-    src/toplevelmodel.cpp
-    src/backend.cpp
 )
 
 qt_add_qml_module(wlrportalpicker
@@ -30,12 +28,17 @@ qt_add_qml_module(wlrportalpicker
     VERSION 1.0
     QML_FILES
         src/qml/Main.qml
+    SOURCES
+        src/toplevelmodel.cpp
+        src/outputmodel.cpp
+        src/backend.cpp
 )
 
 qt_generate_wayland_protocol_client_sources(wlrportalpicker
     PRIVATE_CODE
     FILES
         ${WAYLAND_PROTOCOLS_DIR}/staging/ext-foreign-toplevel-list/ext-foreign-toplevel-list-v1.xml
+        ${WAYLAND_PROTOCOLS_DIR}/unstable/xdg-output/xdg-output-unstable-v1.xml
 )
 
 target_include_directories(wlrportalpicker PRIVATE src)

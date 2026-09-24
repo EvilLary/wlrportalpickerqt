@@ -45,13 +45,13 @@ void ToplevelHandle::ext_foreign_toplevel_handle_v1_done() {
 }
 
 ToplevelModel::ToplevelModel(QObject* parent) : QAbstractListModel(parent) {
-    this->m_toplevelmanager.onToplevel = [this](::ext_foreign_toplevel_handle_v1* handle) { this->onToplevel(handle); };
+    this->m_manager.onToplevel = [this](::ext_foreign_toplevel_handle_v1* handle) { this->onToplevel(handle); };
 
-    QObject::connect(&this->m_toplevelmanager, &QWaylandClientExtension::activeChanged, this, &ToplevelModel::supportedChanged);
+    QObject::connect(&this->m_manager, &QWaylandClientExtension::activeChanged, this, &ToplevelModel::supportedChanged);
 }
 
 bool ToplevelModel::supported() const {
-    return this->m_toplevelmanager.isActive();
+    return this->m_manager.isActive();
 }
 
 void ToplevelModel::onToplevel(::ext_foreign_toplevel_handle_v1* handle) {
@@ -79,21 +79,21 @@ void ToplevelModel::onToplevel(::ext_foreign_toplevel_handle_v1* handle) {
             Qt::QueuedConnection);
     };
 
-    const int row = int(m_toplevels.size());
+    const int row = int(this->m_toplevels.size());
     beginInsertRows({}, row, row);
     this->m_toplevels.append(std::move(toplevel));
     endInsertRows();
 }
 
 int ToplevelModel::rowCount(const QModelIndex& parent) const {
-    return int(m_toplevels.size());
+    return int(this->m_toplevels.size());
 }
 
 QVariant ToplevelModel::data(const QModelIndex& index, int role) const {
     if (!index.isValid() || index.row() >= rowCount())
         return {};
 
-    auto t = m_toplevels.at(index.row());
+    auto t = this->m_toplevels.at(index.row());
     switch (role) {
         case Roles::Title: return t->title;
         case Roles::AppId: return t->appId;

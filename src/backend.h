@@ -1,6 +1,7 @@
 #pragma once
 
 #include <toplevelmodel.h>
+#include <outputmodel.h>
 
 #include <QObject>
 #include <QScreen>
@@ -15,14 +16,15 @@ class Backend : public QObject {
     explicit Backend(QObject* parent = nullptr);
 
     Q_PROPERTY(ToplevelModel* toplevels READ toplevels CONSTANT);
+    Q_PROPERTY(OutputModel* outputs READ outputs CONSTANT);
 
     Q_INVOKABLE void selectScreen(const QString& name);
     Q_INVOKABLE void selectWindow(const QString& id);
 
-    ToplevelModel*   toplevels() {
-        return &this->model;
-    }
+    ToplevelModel*   toplevels();
+    OutputModel*     outputs();
 
   private:
-    ToplevelModel model;
+    ToplevelModel m_toplevelmodel;
+    OutputModel   m_outputmodel;
 };

@@ -7,6 +7,8 @@ ApplicationWindow {
     title: qsTr("Select Window or Screen")
 
     visible: true
+    width: 500
+    height: 400
     header: ToolBar {
         Label {
             anchors.fill: parent
@@ -17,6 +19,13 @@ ApplicationWindow {
             font.pointSize: 14
         }
     }
+
+    // Connections {
+    //     target: Backend.outputs
+    //     function onSupportedChanged(): void {
+    //         print(Backend.outputs.supported)
+    //     }
+    // }
 
     Page {
         anchors.fill: parent
@@ -33,6 +42,23 @@ ApplicationWindow {
 
         contentItem: StackLayout {
             currentIndex: tabbar.currentIndex
+
+            View {
+                model: Backend.outputs
+                placeholderText: "zxdg_output isn't supported"
+                placeholderVisible: !Backend.outputs.supported
+                delegate: ItemDelegate {
+                    required property string description
+                    required property string name
+
+                    width: ListView.view.width
+                    height: implicitHeight
+                    text: description
+                    // text: modelData ? `${modelData.name} - ${modelData.model}` : ""
+
+                    onClicked: Backend.selectScreen(name)
+                }
+            }
 
             View {
                 model: Backend.toplevels
@@ -52,35 +78,18 @@ ApplicationWindow {
                 }
             }
 
-            View {
-                model: Application.screens
-                delegate: ItemDelegate {
-                    required property var modelData
-                    required property var model
-
-                    width: ListView.view.width
-                    height: implicitHeight
-                    text: modelData ? `${modelData.name} - ${modelData.model}` : ""
-
-                    onClicked: Backend.selectScreen(modelData.name)
-                }
-            }
         }
     }
 
-    component View: ScrollView {
-        property alias model: listView.model
-        property alias delegate: listView.delegate
+    component View: ListView {
         property alias placeholderText: placeholderMessage.text
         property alias placeholderVisible: placeholderMessage.visible
-
-        contentItem: ListView {
-            id: listView
-        }
-
+        boundsBehavior: Flickable.StopAtBounds
         Label {
             id: placeholderMessage
             anchors.centerIn: parent
+            horizontalAlignment: Qt.AlignHCenter
+
             width: parent.width - 16
             font.pointSize: 16
             opacity: 0.8

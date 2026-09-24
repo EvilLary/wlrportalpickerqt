@@ -64,8 +64,9 @@ class ToplevelModel : public QAbstractListModel {
 
   private:
     bool                   m_supported;
+
     void                   onToplevel(::ext_foreign_toplevel_handle_v1* handle);
 
     QList<ToplevelHandle*> m_toplevels;
-    ExtTopLevelList        m_toplevelmanager;
+    ExtTopLevelList        m_manager;
 };

@@ -15,3 +15,11 @@ void Backend::selectWindow(const QString& id) {
     std::cout << "Window: " << id.toStdString() << "\n";
     QGuiApplication::quit();
 }
+
+ToplevelModel*   Backend::toplevels() {
+    return &this->m_toplevelmodel;
+}
+
+OutputModel* Backend::outputs() {
+    return &this->m_outputmodel;
+}
